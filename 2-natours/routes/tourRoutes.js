@@ -10,6 +10,8 @@ import {
   getMonthlyPlan,
   getTourWithin,
   getDistances,
+  uploadTourImages,
+  resizeTourImages,
 } from "../controllers/tourController.js";
 import { protect, restrictTo } from "../controllers/authController.js";
 import { createReview } from "../controllers/reviewController.js";
@@ -34,7 +36,6 @@ router
 
 router.route("/distances/:latlng/unit/:unit").get(getDistances);
 
-
 router
   .route("/")
   .get(getAllTours)
@@ -42,7 +43,13 @@ router
 router
   .route("/:id")
   .get(getTour)
-  .patch(protect, restrictTo("lead-guide", "admin"), updateTour)
+  .patch(
+    protect,
+    restrictTo("lead-guide", "admin"),
+    uploadTourImages,
+    resizeTourImages,
+    updateTour,
+  )
   .delete(protect, restrictTo("lead-guide", "admin"), deleteTour);
 
 router.use("/:tourId/reviews", reviewRouter);

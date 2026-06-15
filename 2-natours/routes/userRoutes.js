@@ -6,8 +6,10 @@ import {
   getAllUsers,
   getMe,
   getUser,
+  resizeUserPhoto,
   updateMe,
   updateUser,
+  uploadUserPhoto,
 } from "./../controllers/userController.js";
 import {
   signup,
@@ -33,7 +35,7 @@ router.use(protect);
 
 router.patch("/update-password", updatePassword);
 router.get("/me", getMe, getUser);
-router.patch("/update-me", updateMe);
+router.patch("/update-me", uploadUserPhoto, resizeUserPhoto, updateMe);
 router.patch("/delete-me", deleteMe);
 
 router.use(restrictTo("admin"));
