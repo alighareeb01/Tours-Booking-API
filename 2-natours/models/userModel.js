@@ -50,13 +50,13 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-// userSchema.pre("save", async function () {
-//   if (!this.isModified("password")) {
-//     return;
-//   }
-//   this.password = await bcrypt.hash(this.password, 12);
-//   this.passwordConfirm = undefined;
-// });
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) {
+    return;
+  }
+  this.password = await bcrypt.hash(this.password, 12);
+  this.passwordConfirm = undefined;
+});
 
 userSchema.methods.correctPassword = async function (
   candidatePassword,
@@ -93,12 +93,12 @@ userSchema.methods.createPasswordResetToken = function () {
   return resetToken;
 };
 
-// userSchema.pre("save", function () {
-//   if (!this.isModified("password") || this.isNew) {
-//     return;
-//   }
-//   this.passwordChangedAt = Date.now() - 1000;
-// });
+userSchema.pre("save", function () {
+  if (!this.isModified("password") || this.isNew) {
+    return;
+  }
+  this.passwordChangedAt = Date.now() - 1000;
+});
 
 // userSchema.pre("/^find/", function () {
 //   this.find({ active: { $ne: false } });

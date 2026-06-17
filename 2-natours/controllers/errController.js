@@ -10,6 +10,10 @@ function sendErrDev(err, res) {
 }
 
 function sendErrProd(err, res) {
+  console.log("ERROR:", err);
+  console.log("NAME:", err.name);
+  console.log("CODE:", err.code);
+  console.log("OPERATIONAL:", err.isOperational);
   if (err.isOperational) {
     res.status(err.statusCode).json({
       status: err.status,
@@ -28,9 +32,13 @@ function handleCastErrorDb(err) {
   return new appError(msg, 400);
 }
 function handleDuplicateFieldsDb(err) {
-  const value = err.message.match(/dup key: \{ name: "([^"]+)" \}/)[1];
+  //this doesnot work in production so the correct is
+  // const value = err.message.match(/dup key: \{ name: "([^"]+)" \}/)[1];
+  const value = err.keyValue && Object.values(err.keyValue)[0];
+  const field = err.keyValue && Object.keys(err.keyValue)[0];
 
-  const msg = `Duplicate Fileds value : ${value}`;
+  const msg = `Duplicate field value: ${field} = ${value}. Please use another value.`;
+
   return new appError(msg, 400);
 }
 function handleValidationErrorDb(err) {
