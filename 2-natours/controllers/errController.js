@@ -13,7 +13,6 @@ function sendErrProd(err, res) {
   console.log("ERROR:", err);
   console.log("NAME:", err.name);
   console.log("CODE:", err.code);
-  console.log("OPERATIONAL:", err.isOperational);
   if (err.isOperational) {
     res.status(err.statusCode).json({
       status: err.status,

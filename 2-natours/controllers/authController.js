@@ -3,8 +3,8 @@ import { appError } from "../utils/appError.js";
 import { catchAsync } from "../utils/catchAsync.js";
 import jwt from "jsonwebtoken";
 import { promisify } from "util";
-import { sendEmail } from "../utils/email.js";
 import crypto from "crypto";
+import { Email } from "../utils/email.js";
 
 function tokenSign(id) {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -47,6 +47,10 @@ export const signup = catchAsync(async (req, res, next) => {
     passwordConfirm: req.body.passwordConfirm,
     passwordChangedAt: req.body.passwordChangedAt,
   });
+
+  const url = `${req.protocol}://${req.get("host")}/hello`;
+  console.log(url);
+  await new Email(newUser, url).sendWelcome();
 
   createSendToken(newUser, 201, res);
 });
@@ -135,16 +139,9 @@ export const forgetPassword = catchAsync(async (req, res, next) => {
 
   await user.save({ validateBeforeSave: false });
 
-  const resetURL = `${req.protocol}://${req.get("host")}/api/v1/users/reset-password/${resetToken}`;
-
-  const message = `forgot ypur password? submit another patch request with your new password and confimr to ${resetURL}\n if you didinot forget your password please ignore this email`;
-
   try {
-    await sendEmail({
-      email: req.body.email,
-      subject: "your pass reseet token(valid for 10 min)",
-      message,
-    });
+    const resetURL = `${req.protocol}://${req.get("host")}/api/v1/users/reset-password/${resetToken}`;
+    await new Email(user, resetURL).sendPasswordReset();
   } catch (error) {
     console.log("email error", error);
 
