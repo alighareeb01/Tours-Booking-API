@@ -4,6 +4,8 @@ import morgan from "morgan";
 import tourRouter from "./routes/tourRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import reviewRouter from "./routes/reviewRoute.js";
+import bookinRouter from "./routes/bookingRoutes.js";
+
 import { appError } from "./utils/appError.js";
 import { globalErrorHandler } from "./controllers/errController.js";
 
@@ -61,10 +63,15 @@ app.use(
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/reviews", reviewRouter);
+app.use("/api/v1/booking", bookinRouter);
 
 app.use((req, res, next) => {
   req.reqTime = new Date().toISOString();
   next();
+});
+
+app.get("/", (req, res) => {
+  res.status(200).json({ message: "Welcome to our tour website 😊" });
 });
 
 app.all("*", (req, res, next) => {
